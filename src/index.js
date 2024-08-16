@@ -1,18 +1,6 @@
 import "./style.css";
 import { format, parse } from "date-fns";
 
-let locationData;
-let currentDate;
-let localTime;
-
-let temperature;
-let forecast;
-
-let humidity;
-let windSpeed;
-let feelsLike;
-
-// fetch weather data
 async function getData(location) {
   try {
     const response = await fetch(
@@ -20,52 +8,16 @@ async function getData(location) {
     );
     const data = await response.json();
     console.log(data);
-
-    // location
-
-    locationData = `${data.location.name}, ${data.location.region}, ${data.location.country}`;
-    // date and time
-    const timeInfo = data.location.localtime.split(" ");
-    const date = parse(timeInfo[0], "yyyy-MM-dd", new Date());
-    currentDate = format(date, "EEEE, MMMM do yyyy");
-    localTime = timeInfo[1];
-    // forecast
-
-    forecast = data.current.condition.text;
-    console.log(forecast);
-
-    // temp
-    temperature = data.current.temp_c.toFixed(0);
-    console.log(temperature);
-
-    /* RIght side */
-
-    //Humidity, wind, feels like
-
-    humidity = data.current.humidity;
-    windSpeed = data.current.wind_kph;
-    feelsLike = data.current.feelslike_c.toFixed(0);
-
-    displayInfo();
+    return data;
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    return null;
   }
 }
 
-const locationInput = document.getElementById("location-input");
-const searchBtn = document.getElementById("search-btn");
+async function displayInfo() {
+  const data = await getData(location);
 
-searchBtn.addEventListener("click", () => {
-  if (locationInput.value) {
-    const trimmedLocation = locationInput.value.trim().toLowerCase();
-    getData(trimmedLocation);
-    locationInput.value = "";
-  } else {
-    console.log("please enter a location to search");
-  }
-});
-
-function displayInfo() {
   const locationDisplay = document.getElementById("location");
   const dateInfo = document.getElementById("date-info");
   const timeInfo = document.getElementById("time-info");
@@ -76,20 +28,113 @@ function displayInfo() {
   const feelsLikeInfo = document.getElementById("feels-like-info");
 
   // left side
-  locationDisplay.textContent = `${locationData}`;
-  dateInfo.textContent = `${currentDate}`;
-  timeInfo.textContent = `${localTime}`;
-  tempBox.textContent = `${temperature}°C`;
-  forecastInfo.textContent = `${forecast}`;
+  locationDisplay.textContent = `${data.location.name}, ${data.location.region}, ${data.location.country}`;
+
+  const localDate = data.location.localtime.split(" ");
+  const date = parse(localDate[0], "yyyy-MM-dd", new Date());
+
+  const today = format(date, "EEEE, MMMM do y");
+  dateInfo.textContent = `${today}`;
+  timeInfo.textContent = `${localDate[1]}`;
+  tempBox.textContent = `${data.current.temp_c.toFixed(0)}°C`;
+  forecastInfo.textContent = `${data.current.condition.text}`;
+
+  // center
+  const currentImageDiv = document.getElementById("current-conditions-img");
+  const currentIcon = document.createElement("img");
+
+  currentImageDiv.appendChild(currentIcon);
   // right side
 
-  humidityInfo.textContent = `Humidity: ${humidity}%`;
-  windInfo.textContent = `Wind: ${windSpeed} km/h`;
-  feelsLikeInfo.textContent = `Feels like: ${feelsLike}°C`;
+  humidityInfo.textContent = `Humidity: ${data.current.humidity}%`;
+  windInfo.textContent = `Wind: ${data.current.wind_kph} km/h`;
+  feelsLikeInfo.textContent = `Feels like: ${data.current.feelslike_c.toFixed()}°C`;
+}
+
+const locationInput = document.getElementById("location-input");
+const searchBtn = document.getElementById("search-btn");
+
+searchBtn.addEventListener("click", () => {
+  if (locationInput.value) {
+    const trimmedLocation = locationInput.value.trim().toLowerCase();
+    getData(trimmedLocation);
+    locationInput.value = "";
+    createDayObjects();
+    displayDays();
+  } else {
+    console.log("please enter a location to search");
+  }
+});
+
+class DayInfo {
+  constructor(weekday, hightemp, lowtemp, forecastinfo) {
+    (this.weekday = weekday),
+      (this.hightemp = hightemp),
+      (this.lowtemp = lowtemp),
+      (this.forecastinfo = forecastinfo);
+  }
+}
+
+async function createDayObjects() {
+  const weatherInfo = await getData(location);
+
+  const days = [];
+  for (let i = 0; i < 3; i++) {
+    const day = new DayInfo(
+      weatherInfo.forecast.forecastday[i].date,
+      weatherInfo.forecast.forecastday[i].day.maxtemp_c.toFixed(0),
+      weatherInfo.forecast.forecastday[i].day.mintemp_c.toFixed(0),
+      weatherInfo.forecast.forecastday[i].day.condition.text
+    );
+    days.push(day);
+  }
+
+  return days;
+}
+
+async function displayDays() {
+  const daysToDisplay = await createDayObjects();
+  const futureForecast = document.getElementById("future-forecast");
+  futureForecast.innerHTML = "";
+
+  daysToDisplay.forEach((day) => {
+    const dayBox = document.createElement("div");
+    dayBox.classList.add("day-box");
+
+    const dayName = document.createElement("p");
+    dayName.classList.add("day-name");
+
+    const date = parse(day.weekday, "yyyy-MM-dd", new Date());
+    const dayOfTheWeek = format(date, "EEEE");
+
+    dayName.textContent = dayOfTheWeek;
+
+    const highTemp = document.createElement("p");
+    highTemp.classList.add("day-high-temp");
+    highTemp.textContent = `High: ${day.hightemp}°C`;
+
+    const lowTemp = document.createElement("p");
+    lowTemp.classList.add("day-low-temp");
+    lowTemp.textContent = `Low: ${day.lowtemp}°C`;
+
+    const forecast = document.createElement("div");
+    forecast.classList.add("day-forecast");
+    forecast.textContent = day.forecastinfo;
+
+    futureForecast.appendChild(dayBox);
+
+    dayBox.appendChild(dayName);
+    dayBox.appendChild(highTemp);
+    dayBox.appendChild(lowTemp);
+    dayBox.appendChild(forecast);
+  });
 }
 
 window.addEventListener("DOMContentLoaded", () => {
   getData("paris");
+  displayInfo();
+  createDayObjects();
+  displayDays();
 });
 
 // refactor for good practice
