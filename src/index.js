@@ -1,5 +1,6 @@
 import "./style.css";
 import { format, parse } from "date-fns";
+import { weatherGroups } from "./weathericons";
 
 async function getData(location) {
   try {
@@ -15,91 +16,93 @@ async function getData(location) {
   }
 }
 
-async function displayInfo() {
+async function displayInfo(location) {
   const data = await getData(location);
 
-  const locationDisplay = document.getElementById("location");
-  const dateInfo = document.getElementById("date-info");
-  const timeInfo = document.getElementById("time-info");
-  const tempBox = document.getElementById("temperature");
-  const forecastInfo = document.getElementById("forecast-info");
-  const humidityInfo = document.getElementById("humidity-info");
-  const windInfo = document.getElementById("wind-info");
-  const feelsLikeInfo = document.getElementById("feels-like-info");
+  if (data) {
+    const locationDisplay = document.getElementById("location");
+    const dateInfo = document.getElementById("date-info");
+    const timeInfo = document.getElementById("time-info");
+    const tempBox = document.getElementById("temperature");
+    const forecastInfo = document.getElementById("forecast-info");
+    const humidityInfo = document.getElementById("humidity-info");
+    const windInfo = document.getElementById("wind-info");
+    const feelsLikeInfo = document.getElementById("feels-like-info");
 
-  // left side
-  locationDisplay.textContent = `${data.location.name}, ${data.location.region}, ${data.location.country}`;
+    // left side
+    locationDisplay.textContent = `${data.location.name}, ${data.location.region}, ${data.location.country}`;
 
-  const localDate = data.location.localtime.split(" ");
-  const date = parse(localDate[0], "yyyy-MM-dd", new Date());
+    const localDate = data.location.localtime.split(" ");
+    const date = parse(localDate[0], "yyyy-MM-dd", new Date());
 
-  const today = format(date, "EEEE, MMMM do y");
-  dateInfo.textContent = `${today}`;
-  timeInfo.textContent = `${localDate[1]}`;
-  tempBox.textContent = `${data.current.temp_c.toFixed(0)}°C`;
-  forecastInfo.textContent = `${data.current.condition.text}`;
+    const today = format(date, "EEEE, MMMM do y");
+    dateInfo.textContent = `${today}`;
+    timeInfo.textContent = `${localDate[1]}`;
+    tempBox.textContent = `${data.current.temp_c.toFixed(0)}°C`;
+    forecastInfo.textContent = `${data.current.condition.text}`;
 
-  // center
-  const currentImageDiv = document.getElementById("current-conditions-img");
-  const currentIcon = document.createElement("img");
+    // center
+    const currentImageDiv = document.getElementById("current-conditions-img");
 
-  currentImageDiv.appendChild(currentIcon);
-  // right side
+    currentImageDiv.innerHTML = getWeatherIcon(
+      data.current.condition.code,
+      data.current.is_day
+    );
 
-  humidityInfo.textContent = `Humidity: ${data.current.humidity}%`;
-  windInfo.textContent = `Wind: ${data.current.wind_kph} km/h`;
-  feelsLikeInfo.textContent = `Feels like: ${data.current.feelslike_c.toFixed()}°C`;
-}
-
-const locationInput = document.getElementById("location-input");
-const searchBtn = document.getElementById("search-btn");
-
-searchBtn.addEventListener("click", () => {
-  if (locationInput.value) {
-    const trimmedLocation = locationInput.value.trim().toLowerCase();
-    getData(trimmedLocation);
-    locationInput.value = "";
-    createDayObjects();
-    displayDays();
+    // right side
+    humidityInfo.textContent = `Humidity: ${data.current.humidity}%`;
+    windInfo.textContent = `Wind: ${data.current.wind_kph} km/h`;
+    feelsLikeInfo.textContent = `Feels like: ${data.current.feelslike_c.toFixed()}°C`;
   } else {
-    console.log("please enter a location to search");
+    console.error("Failed to load data");
   }
-});
+}
 
 class DayInfo {
-  constructor(weekday, hightemp, lowtemp, forecastinfo) {
-    (this.weekday = weekday),
-      (this.hightemp = hightemp),
-      (this.lowtemp = lowtemp),
-      (this.forecastinfo = forecastinfo);
+  constructor(weekday, hightemp, lowtemp, forecastinfo, isday, code) {
+    this.weekday = weekday;
+    this.hightemp = hightemp;
+    this.lowtemp = lowtemp;
+    this.forecastinfo = forecastinfo;
+    this.isday = isday;
+    this.code = code;
   }
 }
 
-async function createDayObjects() {
+async function createDayObjects(location) {
   const weatherInfo = await getData(location);
 
-  const days = [];
-  for (let i = 0; i < 3; i++) {
-    const day = new DayInfo(
-      weatherInfo.forecast.forecastday[i].date,
-      weatherInfo.forecast.forecastday[i].day.maxtemp_c.toFixed(0),
-      weatherInfo.forecast.forecastday[i].day.mintemp_c.toFixed(0),
-      weatherInfo.forecast.forecastday[i].day.condition.text
-    );
-    days.push(day);
+  if (weatherInfo) {
+    const days = [];
+    for (let i = 0; i < 3; i++) {
+      const day = new DayInfo(
+        weatherInfo.forecast.forecastday[i].date,
+        weatherInfo.forecast.forecastday[i].day.maxtemp_c.toFixed(0),
+        weatherInfo.forecast.forecastday[i].day.mintemp_c.toFixed(0),
+        weatherInfo.forecast.forecastday[i].day.condition.text,
+        1,
+        weatherInfo.forecast.forecastday[i].day.condition.code
+      );
+      days.push(day);
+    }
+    return days;
+  } else {
+    console.error("Failed to load weather info");
+    return [];
   }
-
-  return days;
 }
 
-async function displayDays() {
-  const daysToDisplay = await createDayObjects();
+async function displayDays(location) {
+  const daysToDisplay = await createDayObjects(location);
   const futureForecast = document.getElementById("future-forecast");
   futureForecast.innerHTML = "";
 
   daysToDisplay.forEach((day) => {
     const dayBox = document.createElement("div");
     dayBox.classList.add("day-box");
+
+    const dayIcon = document.createElement("div");
+    dayIcon.innerHTML = getWeatherIcon(day.code, day.isday);
 
     const dayName = document.createElement("p");
     dayName.classList.add("day-name");
@@ -122,7 +125,7 @@ async function displayDays() {
     forecast.textContent = day.forecastinfo;
 
     futureForecast.appendChild(dayBox);
-
+    dayBox.appendChild(dayIcon);
     dayBox.appendChild(dayName);
     dayBox.appendChild(highTemp);
     dayBox.appendChild(lowTemp);
@@ -130,19 +133,39 @@ async function displayDays() {
   });
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  getData("paris");
-  displayInfo();
-  createDayObjects();
-  displayDays();
+const locationInput = document.getElementById("location-input");
+const searchBtn = document.getElementById("search-btn");
+
+searchBtn.addEventListener("click", () => {
+  if (locationInput.value) {
+    const trimmedLocation = locationInput.value.trim().toLowerCase();
+    displayInfo(trimmedLocation);
+    displayDays(trimmedLocation);
+    locationInput.value = "";
+  } else {
+    console.log("Please enter a location to search");
+  }
 });
 
-// refactor for good practice
+// icons
 
-// refine current info
+function getWeatherIcon(code, isDay) {
+  let icon = "default.png"; // Fallback icon
 
-// add 3-5 days forecast
+  for (const group in weatherGroups) {
+    if (weatherGroups[group].codes.includes(code)) {
+      icon =
+        isDay === 1 ? weatherGroups[group].day : weatherGroups[group].night;
+    }
+  }
 
-// add imperial / metric converter
+  return icon;
+}
 
-// display style
+// onload
+
+window.addEventListener("DOMContentLoaded", () => {
+  const defaultLocation = "paris";
+  displayInfo(defaultLocation);
+  displayDays(defaultLocation);
+});
