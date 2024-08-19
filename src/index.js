@@ -196,8 +196,10 @@ function errorMessage(message) {
   errorMessage.classList.add("show");
 }
 
-// handle error cases ->  "unable to fetch data or location unknown";
+
 // add spinner?
+// add °f converter
+
 function showPoutyFace() {
   const forecast = document.getElementById("forecast");
   forecast.innerHTML = "";
@@ -206,3 +208,6 @@ function showPoutyFace() {
   errorBox.textContent = ":(";
   forecast.appendChild(errorBox);
 }
+/*
+searchBtn.innerHTML = <div class="spinner-item"></div
+*/
