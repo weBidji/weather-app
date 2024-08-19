@@ -5,7 +5,10 @@ import { weatherGroups } from "./weathericons";
 export async function getData(location) {
   try {
     const response = await fetch(
-      `http://api.weatherapi.com/v1/forecast.json?key=63de79d20d6e4501af8183353241608&q=${location}&days=5&aqi=no&alerts=no`
+      `https://api.weatherapi.com/v1/forecast.json?key=63de79d20d6e4501af8183353241608&q=${location}&days=5&aqi=no&alerts=no`,
+      {
+        mode: 'cors',
+      }
     );
 
     const data = await response.json();
@@ -59,7 +62,6 @@ async function displayInfo(location) {
     errorMessage.classList.add("hide");
   } else {
     console.error("Failed to load data");
-    console.log("lol");
     errorMessage("No matching location found.");
     // showPoutyFace();
   }
