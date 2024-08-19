@@ -12,18 +12,16 @@ export async function getData(location) {
     return data;
   } catch (err) {
     console.error(err);
-    return null;
   }
 }
 
 async function displayInfo(location) {
   const data = await getData(location);
 
-  const errorInfo = document.getElementById("error-info");
+  
 
   if (data) {
-    errorInfo.classList.remove("show");
-    errorInfo.classList.add("hide");
+  
     const locationDisplay = document.getElementById("location");
     const dateInfo = document.getElementById("date-info");
     const timeInfo = document.getElementById("time-info");
@@ -181,7 +179,7 @@ function getWeatherIcon(code, isDay) {
 // onload
 
 window.addEventListener("DOMContentLoaded", () => {
-  const defaultLocation = "donald, bc";
+  const defaultLocation = "paris";
   displayInfo(defaultLocation);
   displayDays(defaultLocation);
 });
