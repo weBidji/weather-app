@@ -208,6 +208,4 @@ function showPoutyFace() {
   errorBox.textContent = ":(";
   forecast.appendChild(errorBox);
 }
-/*
-searchBtn.innerHTML = <div class="spinner-item"></div
-*/
+
