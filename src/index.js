@@ -7,21 +7,21 @@ export async function getData(location) {
     const response = await fetch(
       `http://api.weatherapi.com/v1/forecast.json?key=63de79d20d6e4501af8183353241608&q=${location}&days=5&aqi=no&alerts=no`
     );
+
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (err) {
     console.error(err);
+    errorMessage("Error retrieving data.");
+    showPoutyFace();
   }
 }
 
 async function displayInfo(location) {
   const data = await getData(location);
+  console.log(data);
 
-  
-
-  if (data) {
-  
+  if (data && data.location) {
     const locationDisplay = document.getElementById("location");
     const dateInfo = document.getElementById("date-info");
     const timeInfo = document.getElementById("time-info");
@@ -43,7 +43,6 @@ async function displayInfo(location) {
     tempBox.textContent = `${data.current.temp_c.toFixed(0)}°C`;
     forecastInfo.textContent = `${data.current.condition.text}`;
 
-    // center
     const currentImageDiv = document.getElementById("current-conditions-img");
 
     currentImageDiv.innerHTML = getWeatherIcon(
@@ -51,15 +50,18 @@ async function displayInfo(location) {
       data.current.is_day
     );
 
-    // right side
     humidityInfo.innerHTML = `<span class="secondary">Humidity</span> <span class="main-info">${data.current.humidity}%</span>`;
     windInfo.innerHTML = `<span class="secondary">Wind speed</span> <span class="main-info">${data.current.wind_kph} km/h</span>`;
     feelsLikeInfo.innerHTML = `<span class="secondary">Feels like</span> <span class="main-info">${data.current.feelslike_c.toFixed()}°C</span>`;
+
+    const errorMessage = document.getElementById("error-message");
+    errorMessage.classList.remove("show");
+    errorMessage.classList.add("hide");
   } else {
     console.error("Failed to load data");
     console.log("lol");
-    errorInfo.classList.remove("hide");
-    errorInfo.classList.add("show");
+    errorMessage("No matching location found.");
+    // showPoutyFace();
   }
 }
 
@@ -120,45 +122,48 @@ async function createDayObjects(location) {
     return days;
   } else {
     console.error("Failed to load weather info");
-    return [];
   }
 }
 
 async function displayDays(location) {
   const daysToDisplay = await createDayObjects(location);
-  const futureForecast = document.getElementById("future-forecast");
-  futureForecast.innerHTML = "";
+  if (daysToDisplay) {
+    const forecast = document.getElementById("forecast");
+    forecast.innerHTML = "";
 
-  daysToDisplay.forEach((day) => {
-    const dayBox = document.createElement("div");
-    dayBox.classList.add("day-box");
+    daysToDisplay.forEach((day) => {
+      const dayBox = document.createElement("div");
+      dayBox.classList.add("day-box");
 
-    const dayIcon = document.createElement("div");
-    dayIcon.classList.add("day-icon");
-    dayIcon.innerHTML = getWeatherIcon(day.code, day.isday);
+      const dayIcon = document.createElement("div");
+      dayIcon.classList.add("day-icon");
+      dayIcon.innerHTML = getWeatherIcon(day.code, day.isday);
 
-    const dayName = document.createElement("p");
-    dayName.classList.add("day-name");
+      const dayName = document.createElement("p");
+      dayName.classList.add("day-name");
 
-    const date = parse(day.weekday, "yyyy-MM-dd", new Date());
-    const dayOfTheWeek = format(date, "EEEE");
+      const date = parse(day.weekday, "yyyy-MM-dd", new Date());
+      const dayOfTheWeek = format(date, "EEEE");
 
-    dayName.textContent = dayOfTheWeek;
+      dayName.textContent = dayOfTheWeek;
 
-    const highTemp = document.createElement("p");
-    highTemp.classList.add("day-high-temp");
-    highTemp.textContent = `${day.hightemp}°C`;
+      const highTemp = document.createElement("p");
+      highTemp.classList.add("day-high-temp");
+      highTemp.textContent = `${day.hightemp}°C`;
 
-    const lowTemp = document.createElement("p");
-    lowTemp.classList.add("day-low-temp");
-    lowTemp.textContent = `${day.lowtemp}°C`;
+      const lowTemp = document.createElement("p");
+      lowTemp.classList.add("day-low-temp");
+      lowTemp.textContent = `${day.lowtemp}°C`;
 
-    futureForecast.appendChild(dayBox);
-    dayBox.appendChild(dayName);
-    dayBox.appendChild(dayIcon);
-    dayBox.appendChild(highTemp);
-    dayBox.appendChild(lowTemp);
-  });
+      forecast.appendChild(dayBox);
+      dayBox.appendChild(dayName);
+      dayBox.appendChild(dayIcon);
+      dayBox.appendChild(highTemp);
+      dayBox.appendChild(lowTemp);
+    });
+  } else {
+    return;
+  }
 }
 
 // icon fetching
@@ -179,7 +184,25 @@ function getWeatherIcon(code, isDay) {
 // onload
 
 window.addEventListener("DOMContentLoaded", () => {
-  const defaultLocation = "paris";
+  const defaultLocation = "london";
   displayInfo(defaultLocation);
   displayDays(defaultLocation);
 });
+
+function errorMessage(message) {
+  const errorMessage = document.getElementById("error-message");
+  errorMessage.textContent = message;
+  errorMessage.classList.remove("hide");
+  errorMessage.classList.add("show");
+}
+
+// handle error cases ->  "unable to fetch data or location unknown";
+// add spinner?
+function showPoutyFace() {
+  const forecast = document.getElementById("forecast");
+  forecast.innerHTML = "";
+  const errorBox = document.createElement("div");
+  errorBox.id = "error-box";
+  errorBox.textContent = ":(";
+  forecast.appendChild(errorBox);
+}

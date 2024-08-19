@@ -12,21 +12,18 @@
   --card-border:hsl(30, 00%, 65%);
  
 }
-* {
-  /* border:1px solid white; */
-}
+
+
 body {
   display:flex;
   flex-direction:column;
   justify-content:space-evenly;
    background:url(images/nepal.jpg);
-   
    background-size:cover;
    background-position: bottom center;
    backdrop-filter: brightness(60%);
-  min-height:100vh;
-  color:var(--off-white);
-  
+   min-height:100vh;
+   color:var(--off-white);
    font-family:'rubik', Arial, Helvetica, sans-serif;
 
 
@@ -35,13 +32,63 @@ body {
 
 .main-section{
   padding:2rem 2rem 0 2rem;
-
-    display:flex;
-    flex-grow:1;
-    
+  display:flex;
+  flex-grow:1; 
 }
 
 
+
+
+.one {
+  display:flex;
+  flex-direction:row;
+  justify-content: center;
+  align-items:center;
+  width:60%;
+  position:relative;
+  
+}
+
+
+
+.text-info {
+  padding:0.5rem 1rem 1rem 1.25rem;
+  display:flex;
+  flex-direction:column;
+   align-items:flex-start;
+   gap:10px;
+   width:50%;
+   border-left:2px solid var(--card-border);
+}
+
+
+
+#location {
+  font-size:1.25rem;
+  font-weight:500;
+}
+
+
+#location, #forecast-info {
+  width: 100%;
+ 
+  text-wrap:wrap;
+}
+
+#date-info, #time-info {
+  font-weight:400;
+  font-size:1rem;
+}
+
+#forecast-info {
+  font-size:3rem;
+  font-weight:500;  
+}
+
+#temperature {
+  font-size:2rem;
+  font-weight:500;
+}
 
 #location-input {
   background-color:transparent;
@@ -66,6 +113,13 @@ body {
   border:none;
 }
 
+
+#search-btn:hover {
+  cursor:pointer;
+}
+
+
+
 .row {
   display:flex;
   flex-direction:row;
@@ -73,35 +127,6 @@ body {
   align-items:center;
   width:100%;
 }
-
-#search-btn:hover {
-  cursor:pointer;
-}
-.one {
-  display:flex;
-  flex-direction:row;
-  justify-content: center;
-  align-items:center;
-  width:60%;
-  position:relative;
-  
-}
-
-
-
-.text-info {
-  padding:0.5rem 1rem 1rem 1.25rem;
-  display:flex;
-  flex-direction:column;
-   align-items:flex-start;
-   gap:10px;
-   width:50%;
-   border-left:2px solid var(--card-border);
-   
-   
- 
-}
-
 
 #current-conditions-img{
   height:120px;
@@ -127,43 +152,42 @@ body {
 
 }
 
-
-
-
-#location {
-  font-size:1rem;
-  font-weight:600;
-}
-
-.hide {
-  display:none;
-}
-.show {
-  display:block;
-}
-#location, #forecast-info {
-  width: 100%;
- 
-  text-wrap:wrap;
-}
-
-#date-info, #time-info {
-  font-weight:400;
-  font-size:1rem;
-}
-
-#forecast-info {
-  font-size:3rem;
-  font-weight:600;  
-}
-
-#temperature {
-  font-size:2rem;
-  font-weight:600;
+.main-info {
+  /* font-weight:500; */
+  font-size:1.75rem;
 }
 
 
-#future-forecast {
+
+.right-side-info {
+  display:flex;
+  gap:0.5rem;
+  align-items:flex-end;
+  width:250px;
+  gap:1.25rem;
+}
+
+.right-side-icon {
+  height:40px;
+  width:auto;
+}
+
+.right-svg {
+  height:100%;
+  width:100%;
+  fill:var(--off-white);
+}
+
+
+.secondary {
+  font-size:0.9rem;
+  align-self:flex-start;
+  margin-bottom:0.5rem;
+}
+
+
+
+#forecast {
   flex-grow:1;
   margin:2rem;
   display:flex;
@@ -191,7 +215,7 @@ body {
 
 .day-name {
   font-size:1.125rem;
-  font-weight:600;
+  font-weight:500;
 }
 
 
@@ -203,49 +227,35 @@ body {
 
 .day-high-temp {
   font-size:1.75rem;
-  font-weight:600;
+  font-weight:400;
 }
 
 .day-low-temp{
-  font-weight:500;
+  font-size:1.125rem;
+  font-weight:400;
 }
 
-
-.right-side-info {
-  display:flex;
-  gap:0.5rem;
-  align-items:flex-end;
-  width:250px;
-  gap:1.25rem;
-}
-
-.right-side-icon {
-  height:40px;
-  width:auto;
-}
-
-.right-svg {
-  height:100%;
-  width:100%;
-  fill:var(--off-white);
-}
-
-.main-info {
-  font-weight:600;
-  font-size:1.5rem;
-}
-
-.secondary {
-  font-size:0.825rem;
-  align-self:flex-start;
-  margin-bottom:0.5rem;
-}
 
 
 .column {
   display:flex;
   flex-direction: column;
   align-items:center;
+
+}
+
+.hide {
+  visibility: hidden;
+}
+
+.show {
+  visibility:visible;
+}
+
+#error-box{
+  font-size:2rem;
+  font-weight:500;
+  margin:auto;
 
 }
 
