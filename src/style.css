@@ -6,73 +6,225 @@
     box-sizing:border-box;
 }
 
+:root {
+ 
+  --off-white:hsl(30, 60%, 85%);
+  --card-border:hsl(30, 00%, 65%);
+ 
+}
+
 body {
   display:flex;
   flex-direction:column;
   justify-content:space-evenly;
-   background:url(images/bc-bg.jpg);
+   background:url(images/nepal.jpg);
+   
    background-size:cover;
+   background-position: bottom center;
    backdrop-filter: brightness(60%);
   min-height:100vh;
-  color:white;
+  color:var(--off-white);
+  
+   font-family:'rubik', Arial, Helvetica, sans-serif;
+
+
 }
 
+
 .main-section{
+  padding:2rem 2rem 0 2rem;
+
     display:flex;
     flex-grow:1;
     
 }
 
-.weather-info {
-    border:1px solid black;
-    width:50%;
+
+
+#location-input {
+  background-color:transparent;
+  border:none;
+  color:var(--off-white);
+  font-size:1.125rem;
+  border-bottom:1px solid white;
 }
 
+#location-input::placeholder{
+  color:var(--off-white);
+  opacity:0.8;
+}
+
+#location-input:focus {
+  /* border:none; */
+  outline:none;
+}
+#search-btn {
+  background-color:transparent;
+  color:var(--med-two);
+  border:none;
+}
 .one {
   display:flex;
-  flex-direction:column;
+  flex-direction:row;
+  justify-content: flex-end;
   align-items:flex-start;
-  padding-left:2rem;
-  justify-content:space-evenly;
+  width:60%;
 }
-
-
-.two {
+.text-info {
+  padding-left:1rem;
   display:flex;
   flex-direction:column;
-  align-items:flex-start  ;
-  justify-content: center;
+   align-items:flex-start;
+   gap:10px;
+   width:50%;
+   /* min-width:50%; */
+   /* flex-grow:1; */
+ 
 }
-.three {
+
+.two {
     display:flex;
     flex-direction:column;
-    align-items:flex-end;
+    align-items:center;
+    /* flex-grow:1; */
+    width:40%;
     padding-right:2rem;
+    gap:2rem;
 
 }
 
+
+
 #current-conditions-img{
-  height:60%;
-  width:50%;
+  height:50%;
+  width:80%;
+  margin-bottom:2rem;
 }
 
 #current-conditions-img svg {
-  height:90%;
-  width:90%;
-  fill:white;
+  height:100%;
+  width:100%;
 }
 
-.current-conditions-icon {
-  height:150px;
-  width:150px;
+#location {
+  font-size:1rem;
+  font-weight:600;
+  /* color:var(--med-two); */
 }
+
+.hide {
+  display:none;
+}
+.show {
+  display:block;
+}
+#location, #forecast-info {
+  width: 100%;
+ 
+  text-wrap:wrap;
+}
+
+#date-info, #time-info {
+  font-weight:400;
+  font-size:1rem;
+}
+
+#forecast-info {
+  font-size:3rem;
+  font-weight:600;  
+}
+
+#temperature {
+  font-size:2rem;
+  font-weight:600;
+}
+
 
 #future-forecast {
-  /* border:2px solid red; */
+  /* color:var(--med); */
   flex-grow:1;
+  /* margin-bottom:2.5rem; */
   display:flex;
   justify-content: space-evenly;
   align-items:center;
+  width:80%;
+  margin:0 auto 2.5rem auto;
   min-height:50%;
+  
 }
 
+.day-box {
+  display: flex;
+  flex-direction: column;
+  gap:0.5rem;
+  border-top:3px solid var(--card-border);
+  border-bottom:3px solid var(--card-border);
+  
+  padding:0.5rem 2rem;
+  border-radius:15px;
+}
+
+.day-name {
+  font-size:1.125rem;
+  font-weight:600;
+}
+
+
+.day-icon svg {
+
+  width:50px;
+  height:50px;
+}
+
+.day-high-temp {
+  font-size:1.75rem;
+  font-weight:600;
+}
+
+.day-low-temp{
+  font-weight:500;
+}
+
+
+.right-side-info {
+  display:flex;
+  gap:0.5rem;
+  align-items:flex-end;
+  width:250px;
+  gap:1.25rem;
+}
+
+.right-side-icon {
+  height:40px;
+  width:auto;
+}
+
+.right-svg {
+  height:100%;
+  width:100%;
+  fill:var(--off-white);
+}
+
+.main-info {
+  font-weight:600;
+  font-size:1.5rem;
+}
+
+.secondary {
+  font-size:0.825rem;
+  align-self:flex-start;
+  margin-bottom:0.5rem;
+}
+
+
+.column {
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+
+}
+
+@font-face {
+  font-family: 'rubik';
+  src: url(fonts/Rubik-VariableFont_wght.ttf);
+}

@@ -2,7 +2,7 @@ import "./style.css";
 import { format, parse } from "date-fns";
 import { weatherGroups } from "./weathericons";
 
-async function getData(location) {
+export async function getData(location) {
   try {
     const response = await fetch(
       `http://api.weatherapi.com/v1/forecast.json?key=63de79d20d6e4501af8183353241608&q=${location}&days=5&aqi=no&alerts=no`
@@ -19,7 +19,11 @@ async function getData(location) {
 async function displayInfo(location) {
   const data = await getData(location);
 
+  const errorInfo = document.getElementById("error-info");
+
   if (data) {
+    errorInfo.classList.remove("show");
+    errorInfo.classList.add("hide");
     const locationDisplay = document.getElementById("location");
     const dateInfo = document.getElementById("date-info");
     const timeInfo = document.getElementById("time-info");
@@ -50,13 +54,43 @@ async function displayInfo(location) {
     );
 
     // right side
-    humidityInfo.textContent = `Humidity: ${data.current.humidity}%`;
-    windInfo.textContent = `Wind: ${data.current.wind_kph} km/h`;
-    feelsLikeInfo.textContent = `Feels like: ${data.current.feelslike_c.toFixed()}°C`;
+    humidityInfo.innerHTML = `<span class="secondary">Humidity</span> <span class="main-info">${data.current.humidity}%</span>`;
+    windInfo.innerHTML = `<span class="secondary">Wind speed</span> <span class="main-info">${data.current.wind_kph} km/h</span>`;
+    feelsLikeInfo.innerHTML = `<span class="secondary">Feels like</span> <span class="main-info">${data.current.feelslike_c.toFixed()}°C</span>`;
   } else {
     console.error("Failed to load data");
+    console.log("lol");
+    errorInfo.classList.remove("hide");
+    errorInfo.classList.add("show");
   }
 }
+
+// location search
+
+const locationInput = document.getElementById("location-input");
+const searchBtn = document.getElementById("search-btn");
+
+function handleSearch() {
+  if (locationInput.value) {
+    const trimmedLocation = locationInput.value.trim().toLowerCase();
+    displayInfo(trimmedLocation);
+    displayDays(trimmedLocation);
+    locationInput.value = "";
+  } else {
+    console.log("Please enter a location to search");
+  }
+}
+
+searchBtn.addEventListener("click", handleSearch);
+
+locationInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    handleSearch();
+  }
+});
+
+// forecast objects creation and display
 
 class DayInfo {
   constructor(weekday, hightemp, lowtemp, forecastinfo, isday, code) {
@@ -74,7 +108,7 @@ async function createDayObjects(location) {
 
   if (weatherInfo) {
     const days = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 5; i++) {
       const day = new DayInfo(
         weatherInfo.forecast.forecastday[i].date,
         weatherInfo.forecast.forecastday[i].day.maxtemp_c.toFixed(0),
@@ -102,6 +136,7 @@ async function displayDays(location) {
     dayBox.classList.add("day-box");
 
     const dayIcon = document.createElement("div");
+    dayIcon.classList.add("day-icon");
     dayIcon.innerHTML = getWeatherIcon(day.code, day.isday);
 
     const dayName = document.createElement("p");
@@ -114,43 +149,24 @@ async function displayDays(location) {
 
     const highTemp = document.createElement("p");
     highTemp.classList.add("day-high-temp");
-    highTemp.textContent = `High: ${day.hightemp}°C`;
+    highTemp.textContent = `${day.hightemp}°C`;
 
     const lowTemp = document.createElement("p");
     lowTemp.classList.add("day-low-temp");
-    lowTemp.textContent = `Low: ${day.lowtemp}°C`;
-
-    const forecast = document.createElement("div");
-    forecast.classList.add("day-forecast");
-    forecast.textContent = day.forecastinfo;
+    lowTemp.textContent = `${day.lowtemp}°C`;
 
     futureForecast.appendChild(dayBox);
-    dayBox.appendChild(dayIcon);
     dayBox.appendChild(dayName);
+    dayBox.appendChild(dayIcon);
     dayBox.appendChild(highTemp);
     dayBox.appendChild(lowTemp);
-    dayBox.appendChild(forecast);
   });
 }
 
-const locationInput = document.getElementById("location-input");
-const searchBtn = document.getElementById("search-btn");
-
-searchBtn.addEventListener("click", () => {
-  if (locationInput.value) {
-    const trimmedLocation = locationInput.value.trim().toLowerCase();
-    displayInfo(trimmedLocation);
-    displayDays(trimmedLocation);
-    locationInput.value = "";
-  } else {
-    console.log("Please enter a location to search");
-  }
-});
-
-// icons
+// icon fetching
 
 function getWeatherIcon(code, isDay) {
-  let icon = "default.png"; // Fallback icon
+  let icon;
 
   for (const group in weatherGroups) {
     if (weatherGroups[group].codes.includes(code)) {
@@ -165,7 +181,7 @@ function getWeatherIcon(code, isDay) {
 // onload
 
 window.addEventListener("DOMContentLoaded", () => {
-  const defaultLocation = "paris";
+  const defaultLocation = "donald, bc";
   displayInfo(defaultLocation);
   displayDays(defaultLocation);
 });
