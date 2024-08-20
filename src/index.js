@@ -5,7 +5,8 @@ import { weatherGroups } from "./weathericons";
 export async function getData(location) {
   try {
     const response = await fetch(
-      `https://api.weatherapi.com/v1/forecast.json?key=63de79d20d6e4501af8183353241608&q=${location}&days=5&aqi=no&alerts=no`,
+      // `https://api.weatherapi.com/v1/forecast.json?key=&q=${location}&days=5&aqi=no&alerts=no`,
+      `https://api.weatherapi.com/v1/forecast.json?key=63de79d20d6e4501af8183353241608&q=${location}&days=7&aqi=no&alerts=no`,
       {
         mode: 'cors',
       }
