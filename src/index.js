@@ -7,7 +7,7 @@ export async function getData(location) {
     const response = await fetch(
       `https://api.weatherapi.com/v1/forecast.json?key=63de79d20d6e4501af8183353241608&q=${location}&days=7&aqi=no&alerts=no`,
       {
-        mode: 'cors',
+        mode: "cors",
       }
     );
 
@@ -63,7 +63,7 @@ async function displayInfo(location) {
   } else {
     console.error("Failed to load data");
     errorMessage("No matching location found.");
-    // showPoutyFace();
+    showPoutyFace();
   }
 }
 
@@ -110,7 +110,7 @@ async function createDayObjects(location) {
 
   if (weatherInfo) {
     const days = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 3; i++) {
       const day = new DayInfo(
         weatherInfo.forecast.forecastday[i].date,
         weatherInfo.forecast.forecastday[i].day.maxtemp_c.toFixed(0),
@@ -198,10 +198,6 @@ function errorMessage(message) {
   errorMessage.classList.add("show");
 }
 
-
-// add spinner?
-// add °f converter
-
 function showPoutyFace() {
   const forecast = document.getElementById("forecast");
   forecast.innerHTML = "";
@@ -210,4 +206,3 @@ function showPoutyFace() {
   errorBox.textContent = ":(";
   forecast.appendChild(errorBox);
 }
-

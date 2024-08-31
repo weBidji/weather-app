@@ -64,7 +64,7 @@ body {
 
 
 #location {
-  font-size:1.25rem;
+  font-size:1rem;
   font-weight:500;
 }
 
@@ -81,12 +81,12 @@ body {
 }
 
 #forecast-info {
-  font-size:3rem;
+  font-size:1.5rem;
   font-weight:500;  
 }
 
 #temperature {
-  font-size:2rem;
+  font-size:1.25rem;
   font-weight:500;
 }
 
@@ -129,7 +129,7 @@ body {
 }
 
 #current-conditions-img{
-  height:120px;
+  height:80px;
  width:90%;
  
  
@@ -147,28 +147,24 @@ body {
     align-items:center;
     width:40%;
     padding-top:2rem;
-    /* padding-right:2rem; */
     gap:2rem;
 
 }
 
-.main-info {
-  /* font-weight:500; */
-  font-size:1.75rem;
-}
+
 
 
 
 .right-side-info {
   display:flex;
   gap:0.5rem;
-  align-items:flex-end;
+  align-items:center;
   width:250px;
   gap:1.25rem;
 }
 
 .right-side-icon {
-  height:40px;
+  height:30px;
   width:auto;
 }
 
@@ -179,8 +175,11 @@ body {
 }
 
 
+ .main-info {
+  font-size:1.25rem;
+}
 .secondary {
-  font-size:0.9rem;
+  font-size:0.825rem;
   align-self:flex-start;
   margin-bottom:0.5rem;
 }
@@ -203,35 +202,39 @@ body {
   display: flex;
   flex-direction: column;
   gap:0.5rem;
- 
+ align-items:center;
   
   padding:1rem 2rem;
   border-radius:15px;
   width:15%;
   box-shadow:inset 0px 0px 5px rgba(167, 165, 165, 0.493);
-  backdrop-filter:rgba
+  
   
 }
 
 .day-name {
-  font-size:1.125rem;
+  font-size:1.25rem;
   font-weight:500;
+  align-self:center;
 }
 
+.day-icon {
+  align-self:center;
+}
 
 .day-icon svg {
 
-  width:50px;
-  height:50px;
+  width:35px;
+  height:35px;
 }
 
 .day-high-temp {
-  font-size:1.75rem;
+  font-size:1.5rem;
   font-weight:400;
 }
 
 .day-low-temp{
-  font-size:1.125rem;
+  font-size:1rem;
   font-weight:400;
 }
 
